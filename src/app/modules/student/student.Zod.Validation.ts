@@ -1,83 +1,50 @@
 import { z } from 'zod';
 
-// Zod schema for `name` (userNameSchema)
-const userNameValidationSchema = z.object({
+const userNameSchema = z.object({
   firstName: z
     .string()
-    .max(20, { message: 'First name cannot exceed 20 characters.' })
-    .nonempty({ message: 'First name is required.' })
-    .refine((value) => /^[A-Z][a-z]*$/.test(value), {
-      message: 'First name must start with a capital letter.',
+    .min(1)
+    .max(20)
+    .refine((value) => /^[A-Z]/.test(value), {
+      message: 'First Name must start with a capital letter',
     }),
-  middleName: z
-    .string()
-    .max(20, { message: 'Middle name cannot exceed 20 characters.' })
-    .optional(),
-  lastName: z
-    .string()
-    .nonempty({ message: 'Last name is required.' })
-    .refine((value) => /^[a-zA-Z0-9]+$/.test(value), {
-      message: 'Last name must be alphanumeric.',
-    }),
+  middleName: z.string(),
+  lastName: z.string(),
 });
 
-// Zod schema for `guardian` (guardianSchema)
-const guardianValidationSchema = z.object({
-  fatherName: z.string().nonempty({ message: "Father's name is required." }),
-  fatherOccupation: z
-    .string()
-    .nonempty({ message: "Father's occupation is required." }),
-  fatherContactNo: z
-    .string()
-    .nonempty({ message: "Father's contact number is required." }),
-  motherName: z.string().nonempty({ message: "Mother's name is required." }),
-  motherOccupation: z
-    .string()
-    .nonempty({ message: "Mother's occupation is required." }),
-  motherContactNo: z
-    .string()
-    .nonempty({ message: "Mother's contact number is required." }),
+const guardianSchema = z.object({
+  fatherName: z.string(),
+  fatherOccupation: z.string(),
+  fatherContactNo: z.string(),
+  motherName: z.string(),
+  motherOccupation: z.string(),
+  motherContactNo: z.string(),
 });
 
-// Zod schema for `localGuardian` (localGuardianSchema)
-const localGuardianValidationSchema = z.object({
-  name: z.string().nonempty({ message: "Local guardian's name is required." }),
-  occupation: z
-    .string()
-    .nonempty({ message: "Local guardian's occupation is required." }),
-  contactNo: z
-    .string()
-    .nonempty({ message: "Local guardian's contact number is required." }),
-  address: z
-    .string()
-    .nonempty({ message: "Local guardian's address is required." }),
+const localGuardianSchema = z.object({
+  name: z.string(),
+  occupation: z.string(),
+  contactNo: z.string(),
+  address: z.string(),
 });
 
-// Zod schema for the main `studentSchema`
-const studentValidationSchema = z.object({
-  id: z.string().nonempty({ message: 'Student ID is required.' }),
-  name: userNameValidationSchema,
+export const studentValidationSchema = z.object({
+  id: z.string(),
+  password: z.string().max(20),
+  name: userNameSchema,
   gender: z.enum(['male', 'female', 'other']),
-  dateOfBirth: z.string().optional(),
-  email: z
-    .string()
-    .nonempty({ message: 'Email is required.' })
-    .email({ message: 'Invalid email address.' }),
-  contactNo: z.string().nonempty({ message: 'Contact number is required.' }),
-  emergencyContactNo: z
-    .string()
-    .nonempty({ message: 'Emergency contact number is required.' }),
+  dateOfBirth: z.string(),
+  email: z.string().email(),
+  contactNo: z.string(),
+  emergencyContactNo: z.string(),
   bloogGroup: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']),
-  presentAddress: z
-    .string()
-    .nonempty({ message: 'Present address is required.' }),
-  permanentAddres: z
-    .string()
-    .nonempty({ message: 'Permanent address is required.' }),
-  guardian: guardianValidationSchema,
-  localGuardian: localGuardianValidationSchema,
-  profileImg: z.string().optional(),
+  presentAddress: z.string(),
+  permanentAddress: z.string(),
+  guardian: guardianSchema,
+  localGuardian: localGuardianSchema,
+  profileImg: z.string(),
   isActive: z.enum(['active', 'blocked']).default('active'),
+  isDeleted: z.boolean().optional().default(false),
 });
 
-export { studentValidationSchema };
+export default studentValidationSchema;
